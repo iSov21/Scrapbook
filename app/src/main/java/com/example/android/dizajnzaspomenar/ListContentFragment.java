@@ -13,14 +13,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import static com.example.android.dizajnzaspomenar.R.id.toolbar;
+
 /**
- * Provides UI for the view with List.
+ * Provides UI for the view with .
  */
 public class ListContentFragment extends Fragment {
 
@@ -74,6 +77,7 @@ public class ListContentFragment extends Fragment {
             mPlaceDesc = resources.getStringArray(R.array.place_desc);
             TypedArray a = resources.obtainTypedArray(R.array.place_avator);
             mPlaceAvators = new Drawable[a.length()];
+
             for (int i = 0; i < mPlaceAvators.length; i++) {
                 mPlaceAvators[i] = a.getDrawable(i);
             }

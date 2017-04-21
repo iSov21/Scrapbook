@@ -1,12 +1,23 @@
 package com.example.android.dizajnzaspomenar;
 
+import android.app.ActionBar;
+import android.content.Context;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.util.LruCache;
 import android.support.v4.view.ViewPager;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.style.MetricAffectingSpan;
+import android.text.style.TypefaceSpan;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,13 +62,21 @@ public class MainActivity extends AppCompatActivity
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
+
+       /* SpannableString s = new SpannableString("Spomenar");
+        s.setSpan(new TypefaceSpan(this, "Sacramento-Regular.otf"), 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+    // Update the action bar title with the TypefaceSpan instance
+        ActionBar actionBar = getActionBar();
+        actionBar.setTitle(s);*/
     }
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new ListContentFragment(), "List");
-        adapter.addFragment(new ListContentFragment(), "List");
-        adapter.addFragment(new ListContentFragment(), "List");
+        adapter.addFragment(new ListContentFragment(), "Prvo pitanje");
+        adapter.addFragment(new ListContentFragment(), "Drugo pitanje");
+        adapter.addFragment(new ListContentFragment(), "Treće pitanje");
 
         viewPager.setAdapter(adapter);
     }
@@ -100,27 +120,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -145,5 +145,49 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * Style a {@link Spannable} with a custom {@link Typeface}.
+     *
+     * @author Tristan Waddington
+     */
+    public class TypefaceSpan extends MetricAffectingSpan {
+        /** An <code>LruCache</code> for previously loaded typefaces. */
+        private LruCache<String, Typeface> sTypefaceCache =
+                new LruCache<String, Typeface>(12);
+
+        private Typeface mTypeface;
+
+        /**
+         * Load the {@link Typeface} and apply to a {@link Spannable}.
+         */
+        public TypefaceSpan(Context context, String typefaceName) {
+            mTypeface = sTypefaceCache.get(typefaceName);
+
+            if (mTypeface == null) {
+                mTypeface = Typeface.createFromAsset(context.getApplicationContext()
+                        .getAssets(), String.format("fonts/%s", typefaceName));
+
+                // Cache the loaded Typeface
+                sTypefaceCache.put(typefaceName, mTypeface);
+            }
+        }
+
+        @Override
+        public void updateMeasureState(TextPaint p) {
+            p.setTypeface(mTypeface);
+
+            // Note: This flag is required for proper typeface rendering
+            p.setFlags(p.getFlags() | Paint.SUBPIXEL_TEXT_FLAG);
+        }
+
+        @Override
+        public void updateDrawState(TextPaint tp) {
+            tp.setTypeface(mTypeface);
+
+            // Note: This flag is required for proper typeface rendering
+            tp.setFlags(tp.getFlags() | Paint.SUBPIXEL_TEXT_FLAG);
+        }
     }
 }
