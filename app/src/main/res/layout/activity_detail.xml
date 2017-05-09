@@ -47,7 +47,7 @@
                 android:layout_height="match_parent"
                 tools:background="@drawable/a"
                 android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
+                android:scaleType="centerInside"
                 app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
@@ -69,11 +69,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/article_keylines"
-            android:paddingRight="@dimen/md_keylines"
-            android:paddingTop="@dimen/md_keylines">
+            android:background="@color/background"
+            android:padding="16dp">
 
-            <TextView
+          <!--  <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="?attr/colorAccent"
@@ -88,6 +87,7 @@
                 tools:text="@string/detail_desc" />
 
             <TextView
+                android:id="@+id/question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="?attr/colorAccent"
@@ -100,7 +100,10 @@
                 android:id="@+id/place_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="@string/detail_location" />
+                tools:text="@string/detail_location" /> -->
+
+            <include layout="@layout/details_recycler_view" />
+
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

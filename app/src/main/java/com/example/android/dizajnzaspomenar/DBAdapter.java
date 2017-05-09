@@ -12,8 +12,8 @@ import android.util.Log;
  * Created by Tena on 5/7/2017.
  */
 
-public class DBAdater {
-    //baza pitanja
+public class DBAdapter {
+    //tablica pitanja
     static final String KEY_ROWID = "_id";
     static final String KEY_QUEST = "question";
     static final String TAG = "DBAdapter";
@@ -94,10 +94,7 @@ public class DBAdater {
     }
 
     //---deletes all questions---
-    public boolean deleteQuestions()
-    {
-        return db.delete(DATABASE_TABLE, null, null) > 0;
-    }
+    public void deleteQuestionsTable() { db.execSQL("delete from " + DATABASE_TABLE); }
 
     //---retrieves all the questions---
     public Cursor getAllQuestions()
@@ -124,7 +121,8 @@ public class DBAdater {
         return db.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
-    //baza odgovora
+
+    //tablica odgovora
     static final String KEY_ID_USER = "id_user";
     static final String KEY_USER = "username";
     static final String KEY_NMB_QUEST = "questionNmb";
@@ -167,7 +165,9 @@ public class DBAdater {
         return false;
     }
 
-    //baza korisnika
+    public void deleteAnswersTable(){ db.execSQL("delete from " + DATABASE_TABLE2); }
+
+    //tablica korisnika
     static final String KEY_NAME = "name";
     static final String KEY_EMAIL = "email";
     static final String KEY_PASS = "password";
@@ -242,4 +242,6 @@ public class DBAdater {
         args.put(KEY_ADMIN, admin);
         return db.update(DATABASE_TABLE3, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
+
+    public void deleteUsersTable(){ db.execSQL("delete from " + DATABASE_TABLE3); }
 }

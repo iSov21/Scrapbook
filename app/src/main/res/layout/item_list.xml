@@ -47,7 +47,6 @@
         android:layout_toRightOf="@+id/list_avatar"
         android:textColor="@color/medium_grey"
         android:ellipsize="end"
-        android:singleLine="true"
         tools:text="@string/item_desc"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="@dimen/list_body" />
