@@ -69,7 +69,7 @@ public class DetailActivity extends AppCompatActivity {
 
         DBAdapter db = new DBAdapter(this);
         db.open();
-        Cursor c = db.getContact(position + 10);
+        Cursor c = db.getContact(position + 1);
         Log.e("IME KORISNIKA DETAIL", c.getString(1));
         db.close();
 
@@ -90,10 +90,10 @@ public class DetailActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
-        mAdapter = new MyAdapter(this, position + 10);
+        mAdapter = new MyAdapter(this, position + 1);
         mRecyclerView.setAdapter(mAdapter);
 
-        //ListForDetailActivity userDetails = new ListForDetailActivity();
+        //SmartFragmentStatePagerAdapter userDetails = new SmartFragmentStatePagerAdapter();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -140,9 +140,9 @@ public class DetailActivity extends AppCompatActivity {
                 if (c.moveToFirst())
                 {
                     do {
-                        //Log.e("USER ID", String.valueOf(user_id));
-                        //Log.e("TABLICA ID", String.valueOf(c.getInt(0)));
-                        if( c.getInt(0) == 1 )
+                        Log.e("USER ID", String.valueOf(user_id));
+                        Log.e("TABLICA ID", String.valueOf(c.getInt(0)));
+                        if( c.getInt(0) == user_id )
                         {
                             answersList.add(c.getString(3));
                             Log.e("TEKST ODGOVORA", c.getString(3));

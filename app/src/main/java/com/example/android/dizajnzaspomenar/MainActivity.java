@@ -2,6 +2,7 @@ package com.example.android.dizajnzaspomenar;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Paint;
@@ -15,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.util.LruCache;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -31,6 +33,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,9 +42,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.android.dizajnzaspomenar.R.drawable.c;
+import static com.example.android.dizajnzaspomenar.R.id.fab_new_answer;
+import static com.example.android.dizajnzaspomenar.R.id.fab_new_question;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private float x1,x2;
+    static final int MIN_DISTANCE = 150;
+    public int position;
+
+    private SmartFragmentStatePagerAdapter adapterViewPager;
+    public static final List<String> TitleList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +62,23 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab_question = (FloatingActionButton) findViewById(R.id.fab_new_question);
+        fab_question.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+              /*  Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show(); */
+              new_question();
+            }
+        });
+
+        FloatingActionButton fab_answer = (FloatingActionButton) findViewById(R.id.fab_new_answer);
+        fab_answer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               /* Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show(); */
+               new_answer();
             }
         });
 
@@ -67,14 +91,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //popuniPitanja();
-        //popuniKorisnike();
-        //popuniOdgovore();
-        provjera();
-        //obrisiPitanja();
+        //popuniBazu();
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+        //provjera();
+
+       /* ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager); */
 
        /* SpannableString s = new SpannableString("Spomenar");
         s.setSpan(new TypefaceSpan(this, "Sacramento-Regular.otf"), 0, s.length(),
@@ -83,7 +105,14 @@ public class MainActivity extends AppCompatActivity
     // Update the action bar title with the TypefaceSpan instance
         ActionBar actionBar = getActionBar();
         actionBar.setTitle(s);*/
+       dohvatiPitanja();
+
+        ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
+        vpPager.setAdapter(adapterViewPager);
     }
+
+
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
@@ -108,9 +137,12 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(int position_inner) {
                 Globals g = Globals.getInstance();
-                g.setQuestionId(position);
+                g.setQuestionId(position_inner);
+                position = position_inner;
+
+                //provjera(position);
             }
 
             @Override
@@ -150,6 +182,30 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        switch(event.getAction())
+        {
+            case MotionEvent.ACTION_DOWN:
+                x1 = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                x2 = event.getX();
+                float deltaX = x2 - x1;
+                if (Math.abs(deltaX) > MIN_DISTANCE)
+                {
+                    Toast.makeText(this, "left2right swipe", Toast.LENGTH_SHORT).show ();
+                }
+                else
+                {
+                    Toast.makeText(this, "ELSE", Toast.LENGTH_SHORT).show ();
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
+    }
+
     public class DetailOnPageListener extends ViewPager.SimpleOnPageChangeListener{
 
         private int currentPage;
@@ -181,10 +237,14 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
+            Intent intent = new Intent(this, com.example.android.dizajnzaspomenar.AllUsersActivity.class);
+            this.startActivity(intent);
 
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
+            Intent intent = new Intent(this, com.example.android.dizajnzaspomenar.Settings.class);
+            this.startActivity(intent);
 
         } else if (id == R.id.nav_share) {
 
@@ -239,6 +299,18 @@ public class MainActivity extends AppCompatActivity
             // Note: This flag is required for proper typeface rendering
             tp.setFlags(tp.getFlags() | Paint.SUBPIXEL_TEXT_FLAG);
         }
+    }
+
+    public void popuniBazu()
+    {
+        DBAdapter db = new DBAdapter(this);
+        db.open();
+        if( db.getAllContacts().getCount() == 0 ) {
+            popuniPitanja();
+            popuniKorisnike();
+            popuniOdgovore();
+        }
+        db.close();
     }
 
     public void popuniPitanja() //možda da bude bool da znamo jel uspjesno ili ne?
@@ -308,17 +380,165 @@ public class MainActivity extends AppCompatActivity
         db.close();
     }
 
-    public void provjera()
+    public void provjera(int position)
     {DBAdapter db = new DBAdapter(this);
 
         db.open();
         Cursor c = db.getAllContacts();
         if (c.moveToFirst()){
             do {
-                Toast.makeText(this, c.getString(0), Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, c.getString(0), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, String.valueOf(position), Toast.LENGTH_LONG).show();
             } while (c.moveToNext());
         }
         db.close();}
 
+    public void new_answer()
+    {
+        AlertDialog.Builder newAnswer = new AlertDialog.Builder(MainActivity.this);
+        newAnswer.setTitle("Novi odgovor");
+        newAnswer.setMessage("Odgovor na pitanje " + String.valueOf(position + 1));
+
+        final EditText input = new EditText(MainActivity.this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+
+        input.setLayoutParams(lp);
+        newAnswer.setView(input);
+
+        newAnswer.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+              /*  Globals g = Globals.getInstance();
+                g.logout();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish(); */
+
+                Toast.makeText(getApplicationContext(), input.getText(), Toast.LENGTH_LONG).show();
+                // pogledaj tko je ulogiran i na kojoj smo poziciji
+
+                /* DBAdapter db = new DBAdapter(this);
+                //---update answer to question ---
+                db.open();
+
+                NAPISI FUNKCIJU UPDATE ANSWER KOJA ĆE PRIMATI ID KORISNIKA I ID PITANJA
+                PROVJERA JE LI SADAŠNJI ODGOVOR JEDNAK "---"
+
+                long id;
+                id = db.insertQuestion( input.getText());
+                db.close(); */
+            }
+        });
+        newAnswer.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                Toast.makeText(getApplicationContext(), "Odustali ste od odgovora.", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        AlertDialog dialog = newAnswer.create();
+        dialog.show();
+    }
+
+    public void new_question()
+    {
+        AlertDialog.Builder newAnswer = new AlertDialog.Builder(MainActivity.this);
+        newAnswer.setTitle("Novo pitanje");
+        newAnswer.setMessage("Unesi novo pitanje: ");
+
+        final EditText input = new EditText(MainActivity.this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+
+        input.setLayoutParams(lp);
+        newAnswer.setView(input);
+
+        newAnswer.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+              /*  Globals g = Globals.getInstance();
+                g.logout();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish(); */
+
+                Toast.makeText(getApplicationContext(), input.getText(), Toast.LENGTH_LONG).show();
+
+               /* DBAdapter db = new DBAdapter(this);
+                //---add a question---
+                db.open();
+                long id;
+                id = db.insertQuestion( input.getText());
+                db.close(); */
+
+            }
+        });
+        newAnswer.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                Toast.makeText(getApplicationContext(), "Odustali ste od novog pitanja.", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        AlertDialog dialog = newAnswer.create();
+        dialog.show();
+    }
+    //------------------------------------------------------------------------------
+
+    public static class MyPagerAdapter extends SmartFragmentStatePagerAdapter {
+        private static int NUM_ITEMS = 7;
+
+        public MyPagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
+        }
+
+        // Returns total number of pages
+        @Override
+        public int getCount() {
+            return NUM_ITEMS;
+        }
+
+        // Returns the fragment to display for that page
+        @Override
+        public Fragment getItem(int position) {
+        /*    switch (position) {
+                case 0: // Fragment # 0 - This will show FirstFragment
+                    return FirstFragment.newInstance(0, "Page # 1");
+                case 1: // Fragment # 0 - This will show FirstFragment different title
+                    return FirstFragment.newInstance(1, "Page # 2");
+                case 2: // Fragment # 1 - This will show SecondFragment
+                    return FirstFragment.newInstance(2, "Page # 3");
+                default:
+                    return null;
+            } */
+        return PageFragment.newInstance( position, TitleList.get(position) );
+        }
+
+        // Returns the page title for the top indicator
+        @Override
+        public CharSequence getPageTitle(int position) {
+            //return "Page " + position;
+
+            return TitleList.get(position);
+        }
+
+    }
+
+    public void dohvatiPitanja()
+    {
+        DBAdapter db = new DBAdapter(this);
+
+        db.open();
+        Cursor c = db.getAllQuestions();
+        if (c.moveToFirst()) {
+            do {
+                TitleList.add(c.getString(1));
+            } while (c.moveToNext());
+        }
+        db.close();
+    }
 
 }
+
+

@@ -22,7 +22,7 @@ import java.util.List;
  * Created by Tena on 5/10/2017.
  */
 
-public class AllUsers extends AppCompatActivity {
+public class AllQuestions extends AppCompatActivity {
     public static final String EXTRA_POSITION = "position";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -43,18 +43,13 @@ public class AllUsers extends AppCompatActivity {
         Log.e("POSITION", String.valueOf(position));
         Resources resources = getResources();
 
-        DBAdapter db = new DBAdapter(this);
-        db.open();
-        Cursor c = db.getAllContacts();
-        //Log.e("IME KORISNIKA DETAIL", c.getString(1));
-        db.close();
-
         // Set title of Detail page
-        collapsingToolbar.setTitle("Sve osobe u Spomenaru");
+        collapsingToolbar.setTitle("Sva pitanja u Spomenaru");
 
-        TypedArray placePictures = resources.obtainTypedArray(R.array.places_picture);
+
+        TypedArray placePictures = resources.obtainTypedArray(R.array.slike);
         ImageView placePicutre = (ImageView) findViewById(R.id.image);
-        placePicutre.setImageDrawable(placePictures.getDrawable(position % placePictures.length()));
+        placePicutre.setImageDrawable(placePictures.getDrawable(0 % placePictures.length()));
 
         placePictures.recycle();
 
@@ -69,7 +64,7 @@ public class AllUsers extends AppCompatActivity {
         mAdapter = new MyAdapter(this, position + 1);
         mRecyclerView.setAdapter(mAdapter);
 
-        //ListForDetailActivity userDetails = new ListForDetailActivity();
+        //SmartFragmentStatePagerAdapter userDetails = new SmartFragmentStatePagerAdapter();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -77,7 +72,7 @@ public class AllUsers extends AppCompatActivity {
         public TextView description;
 
         public ViewHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.item_list, parent, false));
+            super(inflater.inflate(R.layout.item_list_users, parent, false));
             name = (TextView) itemView.findViewById(R.id.list_title);
             description = (TextView) itemView.findViewById(R.id.list_desc);
         }
@@ -91,9 +86,9 @@ public class AllUsers extends AppCompatActivity {
         private int LENGTH; // broj ljudi u Spomenaru
 
         private final String[] mPlaces;
-        private final String[]  mPlaceDescription;
+        //private final String[]  mPlaceDescription;
         private List<String> usersList = new ArrayList<>();
-        private List<String> answersList = new ArrayList<>();
+       // private List<String> answersList = new ArrayList<>();
 
 
         // Provide a suitable constructor (depends on the kind of dataset)
@@ -111,7 +106,7 @@ public class AllUsers extends AppCompatActivity {
             LENGTH = usersList.size();
 
             //a ovdje umjesto pitanja odgovori
-            c = db.getAllAnswers();
+         /*   c = db.getAllAnswers();
             // Log.e("QUESTIONID", String.valueOf(getQuestionId()));
             if (c.moveToFirst())
             {
@@ -124,12 +119,12 @@ public class AllUsers extends AppCompatActivity {
                         Log.e("TEKST ODGOVORA", c.getString(3));
                     }
                 } while (c.moveToNext());
-            }
+            } */
             db.close();
             //increase();
 
             mPlaces = usersList.toArray(new String[0]);
-            mPlaceDescription = answersList.toArray(new String[0]);
+          //  mPlaceDescription = answersList.toArray(new String[0]);
         }
 
         // Create new views (invoked by the layout manager)
@@ -143,7 +138,7 @@ public class AllUsers extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.name.setText(mPlaces[position % mPlaces.length]);
-            holder.description.setText( mPlaceDescription[position %  mPlaceDescription.length]);
+          //  holder.description.setText( mPlaceDescription[position %  mPlaceDescription.length]);
         }
 
         // Return the size of your dataset (invoked by the layout manager)

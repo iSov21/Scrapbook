@@ -1,9 +1,5 @@
 package com.example.android.dizajnzaspomenar;
 
-/**
- * Created by Tena on 4/11/2017.
- */
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -14,34 +10,58 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.id.list;
 import static com.example.android.dizajnzaspomenar.DetailActivity.EXTRA_POSITION;
-import static com.example.android.dizajnzaspomenar.R.drawable.a;
-import static com.example.android.dizajnzaspomenar.R.drawable.c;
-import static com.example.android.dizajnzaspomenar.R.drawable.d;
-import static com.example.android.dizajnzaspomenar.R.id.toolbar;
 
-public class ListContentFragment extends Fragment {
+/**
+ * Created by Tena on 5/10/2017.
+ */
 
-    //public static final String EXTRA_QUESTION_ID = "questionId";
+public class PageFragment extends Fragment {
+    
+    private static String title;
+    private static int page;
 
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    
 
+    // newInstance constructor for creating fragment with arguments
+    public static PageFragment newInstance(int page, String title) {
+        PageFragment fragmentFirst = new PageFragment();
+        Bundle args = new Bundle();
+        args.putInt("someInt", page);
+        args.putString("someTitle", title);
+        fragmentFirst.setArguments(args);
+        return fragmentFirst;
+    }
+
+    // Store instance variables based on arguments passed
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        page = getArguments().getInt("someInt", 0);
+        title = getArguments().getString("someTitle");
+    }
+
+    // Inflate the view for the fragment based on layout XML
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+     /*   View view = inflater.inflate(R.layout.content_settings, container, false);
+        TextView tvLabel = (TextView) view.findViewById(R.id.tv);
+        tvLabel.setText(page + " -- " + title);
+        return view; */
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(
                 R.layout.recycler_view, container, false);
         ContentAdapter adapter = new ContentAdapter(recyclerView.getContext());
@@ -82,7 +102,7 @@ public class ListContentFragment extends Fragment {
         private int LENGTH; // broj ljudi u Spomenaru
 
         private final String[] mPlaces;
-        private final String[]  mPlaceDescription;
+        private final String[] mPlaceDescription;
         private final Drawable[] mPlaceAvators;
         private List<String> usersList = new ArrayList<>();
         private List<String> answersList = new ArrayList<>();
@@ -95,32 +115,29 @@ public class ListContentFragment extends Fragment {
             DBAdapter db = new DBAdapter(context);
             db.open();
             Cursor c = db.getAllContacts();
-            if (c.moveToFirst())
-            {
+            if (c.moveToFirst()) {
                 do {
                     usersList.add(c.getString(1));
                 } while (c.moveToNext());
             }
             LENGTH = usersList.size();
 
-            c = db.getAnswers(getQuestionId());
-            Log.e("QUESTIONID", String.valueOf(getQuestionId()));
-            if (c.moveToFirst()  )
-            {
+            c = db.getAnswers(page+1);
+            Log.e("QUESTIONID", String.valueOf(page+1));
+            if (c.moveToFirst()) {
                 do {
-                    if( c.getInt(2) == getQuestionId() )
-                    {
+                    if (c.getInt(2) == page+1) {
                         answersList.add(c.getString(3));
                         Log.e("TEKST ODGOVORA", c.getString(3));
                     }
                 } while (c.moveToNext());
             }
             db.close();
-            if ( getQuestionId() == 1 )
-                increase();
+            //if (getQuestionId() == 1)
+              //  increase();
 
             mPlaces = usersList.toArray(new String[0]);
-           // mPlaceDescription = resources.getStringArray(R.array.place_desc);
+            // mPlaceDescription = resources.getStringArray(R.array.place_desc);
             mPlaceDescription = answersList.toArray(new String[0]);
             TypedArray a = resources.obtainTypedArray(R.array.place_avator);
             mPlaceAvators = new Drawable[a.length()];
@@ -131,6 +148,7 @@ public class ListContentFragment extends Fragment {
             a.recycle();
 
         }
+
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new ViewHolder(LayoutInflater.from(parent.getContext()), parent);
@@ -140,7 +158,7 @@ public class ListContentFragment extends Fragment {
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
             holder.name.setText(mPlaces[position % mPlaces.length]);
-            holder.description.setText( mPlaceDescription[position %  mPlaceDescription.length]);
+            holder.description.setText(mPlaceDescription[position % mPlaceDescription.length]);
         }
 
         @Override
@@ -148,38 +166,5 @@ public class ListContentFragment extends Fragment {
             return LENGTH;
         }
 
-        public void increase()
-        {
-            Globals g = Globals.getInstance();
-            g.setQuestionId();
-        }
-
-        public int getQuestionId()
-        {
-            Globals g = Globals.getInstance();
-            return g.getQuestionId();
-        }
-
-      /*  public int compare()
-        {
-
-        } */
-
     }
-
-   /* public void dohvatiKorisnike() //bool
-    {
-        DBAdapter db = new DBAdapter(this.getContext());
-        //--get all questions---
-        db.open();
-        Cursor c = db.getAllContacts();
-        if (c.moveToFirst())
-        {
-            do {
-                usersList.add(c.getString(1));
-            } while (c.moveToNext());
-        }
-        db.close();
-    } */
-
 }

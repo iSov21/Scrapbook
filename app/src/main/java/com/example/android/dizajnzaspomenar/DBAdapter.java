@@ -167,6 +167,11 @@ public class DBAdapter {
 
     public void deleteAnswersTable(){ db.execSQL("delete from " + DATABASE_TABLE2); }
 
+    public boolean updateAnswer()
+    {
+        return true;
+    }
+
     //tablica korisnika
     static final String KEY_NAME = "name";
     static final String KEY_EMAIL = "email";

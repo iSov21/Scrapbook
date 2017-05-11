@@ -20,12 +20,14 @@
     <color name="dark_grey">#424242</color>
     <color name="medium_grey">#9E9E9E</color>
     <color name="button_grey">#757575</color>
-    <!-- <color name="colorPrimary">#A7D6D6</color> -->
-    <color name="colorPrimary">#83C0B1</color>
-    <color name="colorPrimaryDark">#62AAA6</color>
+    <color name="colorPrimary">#A7D6D6</color>
+    <!-- <color name="colorPrimary">#83C0B1</color> -->
+    <!--<color name="colorPrimaryDark">#62AAA6</color> -->
     <!--<color name="colorPrimaryDark">#83C0B1</color>-->
-    <color name="colorAccent">#273C41</color>
-    <color name="background">#CDD7BD</color>
+    <color name="colorPrimaryDark">#74B3B3</color>
+    <color name="colorAccent">#576D9F</color>
+    <!--<color name="background">#CDD7BD</color>-->
+    <color name="background">#D6EFEF</color>
     <color name="rose">#FFD4D7</color>
 
 </resources>

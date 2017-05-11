@@ -8,4 +8,16 @@
     tools:context="com.example.android.dizajnzaspomenar.Settings"
     tools:showIn="@layout/activity_settings">
 
+    <TextView
+        android:id="@+id/tv"
+        android:text="Neki tekst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+  <!--  <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Promijeni temu"
+        android:onClick="changeTheme"/> -->
+
 </android.support.constraint.ConstraintLayout>

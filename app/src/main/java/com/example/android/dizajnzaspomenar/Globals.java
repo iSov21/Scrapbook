@@ -58,7 +58,11 @@ public class Globals extends Application{
     }
 
     public void setQuestionId(int position){
-        this.questionId = position;
+        //this.questionId = position;
+        if ( position + 1 >= questionId )
+            this.questionId = position + 1;
+
+        else this.questionId = position -1;
     }
 
     public int getQuestionId(){

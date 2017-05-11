@@ -86,19 +86,26 @@
         <item>Cape Town, South Africa</item>
     </string-array>
     <array name="place_avator">
+        <item>@drawable/astronaut</item>
         <item>@drawable/saturn</item>
         <item>@drawable/moon_rover</item>
         <item>@drawable/rocket</item>
         <item>@drawable/alien</item>
+        <item>@drawable/earth</item>
         <item>@drawable/ufo</item>
         <item>@drawable/star</item>
     </array>
     <array name="places_picture">
+        <item>@drawable/astronaut</item>
         <item>@drawable/saturn</item>
         <item>@drawable/moon_rover</item>
         <item>@drawable/rocket</item>
         <item>@drawable/alien</item>
+        <item>@drawable/earth</item>
         <item>@drawable/ufo</item>
         <item>@drawable/star</item>
+    </array>
+    <array name="slike">
+        <item>@drawable/space</item>
     </array>
 </resources>
