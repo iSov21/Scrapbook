@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.util.LruCache;
+import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
@@ -44,6 +45,7 @@ import java.util.List;
 import static com.example.android.dizajnzaspomenar.R.drawable.c;
 import static com.example.android.dizajnzaspomenar.R.id.fab_new_answer;
 import static com.example.android.dizajnzaspomenar.R.id.fab_new_question;
+import static com.example.android.dizajnzaspomenar.R.id.pager_title_strip;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -51,7 +53,10 @@ public class MainActivity extends AppCompatActivity
     private float x1,x2;
     static final int MIN_DISTANCE = 150;
     public int position;
+    public static int current_position;
+    public static int BROJ_PITANJA;
 
+    private ViewPager vpPager;
     private SmartFragmentStatePagerAdapter adapterViewPager;
     public static final List<String> TitleList = new ArrayList<>();
 
@@ -66,9 +71,7 @@ public class MainActivity extends AppCompatActivity
         fab_question.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              /*  Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show(); */
-              new_question();
+                new_question();
             }
         });
 
@@ -76,9 +79,7 @@ public class MainActivity extends AppCompatActivity
         fab_answer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show(); */
-               new_answer();
+                new_answer();
             }
         });
 
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //popuniBazu();
+        popuniBazu();
 
         //provjera();
 
@@ -101,15 +102,31 @@ public class MainActivity extends AppCompatActivity
        /* SpannableString s = new SpannableString("Spomenar");
         s.setSpan(new TypefaceSpan(this, "Sacramento-Regular.otf"), 0, s.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
     // Update the action bar title with the TypefaceSpan instance
         ActionBar actionBar = getActionBar();
         actionBar.setTitle(s);*/
-       dohvatiPitanja();
+        dohvatiPitanja();
 
-        ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
+        vpPager = (ViewPager) findViewById(R.id.viewpager);
         adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
         vpPager.setAdapter(adapterViewPager);
+
+        vpPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                current_position = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
 
@@ -182,29 +199,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        switch(event.getAction())
-        {
-            case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
-                break;
-            case MotionEvent.ACTION_UP:
-                x2 = event.getX();
-                float deltaX = x2 - x1;
-                if (Math.abs(deltaX) > MIN_DISTANCE)
-                {
-                    Toast.makeText(this, "left2right swipe", Toast.LENGTH_SHORT).show ();
-                }
-                else
-                {
-                    Toast.makeText(this, "ELSE", Toast.LENGTH_SHORT).show ();
-                }
-                break;
-        }
-        return super.onTouchEvent(event);
-    }
 
     public class DetailOnPageListener extends ViewPager.SimpleOnPageChangeListener{
 
@@ -360,11 +354,11 @@ public class MainActivity extends AppCompatActivity
         id = db.insertAnswer(2, "Pero", 2, "Zadar");
         id = db.insertAnswer(2, "Pero", 3, "10");
 
-        for (int i=0; i<4; i++)
-            id = db.insertAnswer(2, "Pero", i+1, "---");
+        for (int i=4; i<=7; i++)
+            id = db.insertAnswer(2, "Pero", i, "---");
 
-        for (int i=0; i<7; i++)
-            id = db.insertAnswer(3, "admin", i+1, "---");
+        for (int i=1; i<=7; i++)
+            id = db.insertAnswer(3, "admin", i, "---");
 
         db.close();
     }
@@ -395,9 +389,11 @@ public class MainActivity extends AppCompatActivity
 
     public void new_answer()
     {
+        final int id_pitanja = current_position + 1;
         AlertDialog.Builder newAnswer = new AlertDialog.Builder(MainActivity.this);
+
         newAnswer.setTitle("Novi odgovor");
-        newAnswer.setMessage("Odgovor na pitanje " + String.valueOf(position + 1));
+        newAnswer.setMessage("Odgovor na pitanje " + id_pitanja);
 
         final EditText input = new EditText(MainActivity.this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -409,31 +405,33 @@ public class MainActivity extends AppCompatActivity
 
         newAnswer.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-              /*  Globals g = Globals.getInstance();
-                g.logout();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish(); */
 
-                Toast.makeText(getApplicationContext(), input.getText(), Toast.LENGTH_LONG).show();
-                // pogledaj tko je ulogiran i na kojoj smo poziciji
-
-                /* DBAdapter db = new DBAdapter(this);
-                //---update answer to question ---
+                DBAdapter db = new DBAdapter(getApplicationContext());
                 db.open();
 
-                NAPISI FUNKCIJU UPDATE ANSWER KOJA ĆE PRIMATI ID KORISNIKA I ID PITANJA
-                PROVJERA JE LI SADAŠNJI ODGOVOR JEDNAK "---"
-
-                long id;
-                id = db.insertQuestion( input.getText());
-                db.close(); */
+                if ( db.isAnswered(2, id_pitanja) ) {//id_usera, id_pitanja
+                    Snackbar.make(findViewById(android.R.id.content),
+                            "Već ste odgovorili na ovo pitanje!",
+                            Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
+                }
+                //---update answer to question ---
+                else{
+                    int id2;
+                    id2 = db.updateAnswer(2, id_pitanja, input.getText().toString());
+                    if (id2 > 0) {
+                        Toast.makeText(getApplicationContext(), "Updejtano " + id2 + " redaka!", Toast.LENGTH_SHORT).show();
+                        //vpPager.setAdapter(adapterViewPager);
+                        vpPager.setCurrentItem(current_position);
+                    }
+                    db.close();
+                }
             }
         });
         newAnswer.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User cancelled the dialog
-                Toast.makeText(getApplicationContext(), "Odustali ste od odgovora.", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Odustali ste od odgovora.", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -457,40 +455,48 @@ public class MainActivity extends AppCompatActivity
 
         newAnswer.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-              /*  Globals g = Globals.getInstance();
+               /* Globals g = Globals.getInstance();
                 g.logout();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 finish(); */
-
-                Toast.makeText(getApplicationContext(), input.getText(), Toast.LENGTH_LONG).show();
-
-               /* DBAdapter db = new DBAdapter(this);
-                //---add a question---
+                DBAdapter db = new DBAdapter(getApplicationContext());
                 db.open();
-                long id;
-                id = db.insertQuestion( input.getText());
-                db.close(); */
+                /*if ( !db.Admin(g.getId) )
+                {
+                     Toast.makeText(getApplicationContext(), "Nemate ovlasti dodati pitanje!", Toast.LENGTH_SHORT).show();
+                }
 
+                else{*/
+                //---add a question---
+
+                long id3;
+                id3 = db.insertQuestion( input.getText().toString());
+                if ( id3 > 0 ) {
+                    Toast.makeText(getApplicationContext(), "Novo pitanje je uspješno dodano!", Toast.LENGTH_SHORT).show();
+                    osvjezi();
+
+                }
+                db.close();
             }
         });
         newAnswer.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User cancelled the dialog
-                Toast.makeText(getApplicationContext(), "Odustali ste od novog pitanja.", Toast.LENGTH_LONG).show();
+               // Toast.makeText(getApplicationContext(), "Odustali ste od novog pitanja.", Toast.LENGTH_LONG).show();
             }
         });
-
         AlertDialog dialog = newAnswer.create();
         dialog.show();
     }
     //------------------------------------------------------------------------------
 
     public static class MyPagerAdapter extends SmartFragmentStatePagerAdapter {
-        private static int NUM_ITEMS = 7;
+        private static int NUM_ITEMS;
 
         public MyPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
+            NUM_ITEMS = BROJ_PITANJA;
         }
 
         // Returns total number of pages
@@ -502,31 +508,27 @@ public class MainActivity extends AppCompatActivity
         // Returns the fragment to display for that page
         @Override
         public Fragment getItem(int position) {
-        /*    switch (position) {
-                case 0: // Fragment # 0 - This will show FirstFragment
-                    return FirstFragment.newInstance(0, "Page # 1");
-                case 1: // Fragment # 0 - This will show FirstFragment different title
-                    return FirstFragment.newInstance(1, "Page # 2");
-                case 2: // Fragment # 1 - This will show SecondFragment
-                    return FirstFragment.newInstance(2, "Page # 3");
-                default:
-                    return null;
-            } */
-        return PageFragment.newInstance( position, TitleList.get(position) );
+
+            return PageFragment.newInstance( position, TitleList.get(position) );
         }
 
         // Returns the page title for the top indicator
         @Override
         public CharSequence getPageTitle(int position) {
             //return "Page " + position;
-
+            //current_position = position;
             return TitleList.get(position);
+        }
+
+        public int getItemPosition(Object item) {
+            return POSITION_NONE;
         }
 
     }
 
     public void dohvatiPitanja()
     {
+        int broj_pitanja = 0;
         DBAdapter db = new DBAdapter(this);
 
         db.open();
@@ -534,9 +536,36 @@ public class MainActivity extends AppCompatActivity
         if (c.moveToFirst()) {
             do {
                 TitleList.add(c.getString(1));
+                ++broj_pitanja;
             } while (c.moveToNext());
         }
         db.close();
+        BROJ_PITANJA = broj_pitanja;
+    }
+
+    public void osvjezi()
+    {
+        dohvatiPitanja();
+        vpPager = (ViewPager) findViewById(R.id.viewpager);
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
+        vpPager.setAdapter(adapterViewPager);
+
+        vpPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                current_position = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
 }

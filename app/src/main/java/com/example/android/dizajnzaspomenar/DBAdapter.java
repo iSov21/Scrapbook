@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.SQLException;
 import android.util.Log;
 
+import static android.R.attr.id;
+import static com.example.android.dizajnzaspomenar.MainActivity.TitleList;
+
 /**
  * Created by Tena on 5/7/2017.
  */
@@ -84,7 +87,18 @@ public class DBAdapter {
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_QUEST, q);
-        return db.insert(DATABASE_TABLE, null, initialValues);
+        long insert =  db.insert(DATABASE_TABLE, null, initialValues); // ovo vraca last inserted id
+        if (insert != -1)
+        {
+            Cursor c = getAllContacts();
+            if (c.moveToFirst()) {
+                do {
+                    insertAnswer(Integer.parseInt(c.getString(0)), c.getString(1), (int)insert, "---" );
+                } while (c.moveToNext());
+            }
+            return 1;
+        }
+        else { return 0; }
     }
 
     //---deletes a particular question--- //to vjerojatno necemo koristiti
@@ -156,20 +170,31 @@ public class DBAdapter {
         return db.query(DATABASE_TABLE2, new String[]{KEY_ID_USER, KEY_USER, KEY_NMB_QUEST, KEY_ANSW}, null, null, null, null, KEY_ID_USER+" ASC");
     }
 
-    public boolean isAswered(int user_id, int quest_nmb )
+    public boolean isAnswered(int user_id, int quest_nmb )
     {
         int i = db.query(DATABASE_TABLE2, new String[]{KEY_ID_USER, KEY_USER, KEY_NMB_QUEST, KEY_ANSW},
-                KEY_ID_USER + " = " + user_id + " AND " + KEY_NMB_QUEST + " = " + quest_nmb, null, null, null, null).getCount();
+                        KEY_ID_USER + " = " + user_id + " AND " +
+                        KEY_NMB_QUEST + " = " + quest_nmb + " AND " +
+                        KEY_ANSW + " = " + "---",
+                        null, null, null, null).getCount();
         if( i > 0 )
-            return true;
-        return false;
+            return false;
+        return true;
     }
 
     public void deleteAnswersTable(){ db.execSQL("delete from " + DATABASE_TABLE2); }
 
-    public boolean updateAnswer()
+    public int updateAnswer(Integer id_usera, Integer id_pitanja ,String odgovor)
     {
-        return true;
+        ContentValues cv = new ContentValues();
+        //cv.put(KEY_ID_USER, id_usera);
+        //cv.put(KEY_USER, user);
+        //cv.put(KEY_NMB_QUEST, id_pitanja);
+        cv.put(KEY_ANSW, odgovor);
+
+        return db.update(DATABASE_TABLE2, cv, KEY_ID_USER + "=" + id_usera +
+                        " AND " + KEY_NMB_QUEST + "=" + id_pitanja, null);
+        // vraca broj promjenjenih redaka
     }
 
     //tablica korisnika
