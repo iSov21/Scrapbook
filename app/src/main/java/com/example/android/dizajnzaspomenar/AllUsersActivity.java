@@ -45,7 +45,7 @@ public class AllUsersActivity extends AppCompatActivity {
 
         TypedArray placePictures = resources.obtainTypedArray(R.array.slike);
         ImageView placePicutre = (ImageView) findViewById(R.id.image);
-        placePicutre.setImageDrawable(placePictures.getDrawable(1 % placePictures.length()));
+        placePicutre.setImageDrawable(placePictures.getDrawable(0 % placePictures.length()));
 
         placePictures.recycle();
 
@@ -68,7 +68,7 @@ public class AllUsersActivity extends AppCompatActivity {
         public TextView description;
 
         public ViewHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.item_list, parent, false));
+            super(inflater.inflate(R.layout.item_list_users, parent, false));
             name = (TextView) itemView.findViewById(R.id.list_title);
             //description = (TextView) itemView.findViewById(R.id.list_desc);
         }

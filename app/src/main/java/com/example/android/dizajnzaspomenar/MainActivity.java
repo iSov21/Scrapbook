@@ -1,6 +1,7 @@
 package com.example.android.dizajnzaspomenar;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.util.LruCache;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -24,6 +26,7 @@ import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 import android.text.style.TypefaceSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -38,6 +41,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.app.AlertDialog.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +60,7 @@ public class MainActivity extends AppCompatActivity
     public static int current_position;
     public static int BROJ_PITANJA;
 
-    private ViewPager vpPager;
+    private  ViewPager vpPager;
     private SmartFragmentStatePagerAdapter adapterViewPager;
     public static final List<String> TitleList = new ArrayList<>();
 
@@ -375,7 +379,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void provjera(int position)
-    {DBAdapter db = new DBAdapter(this);
+    {
+        DBAdapter db = new DBAdapter(this);
 
         db.open();
         Cursor c = db.getAllContacts();
@@ -387,106 +392,150 @@ public class MainActivity extends AppCompatActivity
         }
         db.close();}
 
+
     public void new_answer()
     {
         final int id_pitanja = current_position + 1;
-        AlertDialog.Builder newAnswer = new AlertDialog.Builder(MainActivity.this);
 
-        newAnswer.setTitle("Novi odgovor");
-        newAnswer.setMessage("Odgovor na pitanje " + id_pitanja);
+        final DBAdapter db = new DBAdapter(getApplicationContext());
+        db.open();
+        int nije_odgovoreno =db.notAnswered(1, id_pitanja);
 
-        final EditText input = new EditText(MainActivity.this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
+        //Toast.makeText(getApplicationContext(), "notAnswered = " + nije_odgovoreno, Toast.LENGTH_SHORT).show();
+        if ( nije_odgovoreno == 0) {//id_usera, id_pitanja
 
-        input.setLayoutParams(lp);
-        newAnswer.setView(input);
+            Snackbar.make(findViewById(android.R.id.content),
+                    "Već ste odgovorili na ovo pitanje!",
+                    Snackbar.LENGTH_SHORT)
+                    .setAction("Action", null).show();
+        }
+        else {
+            android.support.v7.app.AlertDialog.Builder newAnswer =
+                    new android.support.v7.app.AlertDialog.Builder(MainActivity.this,  R.style.MyDialogStyle);
+                  /*  .setTitle("Novi odgovor")
+                    .setMessage("Odgovor na pitanje " + id_pitanja); */
 
-        newAnswer.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+            final TextView naslov = new TextView(MainActivity.this);
+            naslov.setText("Unesite odgovor:");
+            naslov.setGravity(Gravity.CENTER);
+            //naslov.setHeight(12);
 
-                DBAdapter db = new DBAdapter(getApplicationContext());
-                db.open();
+            final EditText input = new EditText(MainActivity.this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
 
-                if ( db.isAnswered(2, id_pitanja) ) {//id_usera, id_pitanja
-                    Snackbar.make(findViewById(android.R.id.content),
-                            "Već ste odgovorili na ovo pitanje!",
-                            Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
+            lp.setMargins(24, 24, 24, 24); //TRBL
+
+            input.setLayoutParams(lp);
+            naslov.setLayoutParams(lp);
+            //layoutnaslov.addView(naslov);
+
+            LinearLayout layout = new LinearLayout(MainActivity.this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+
+            layout.addView(naslov);
+            layout.addView(input);
+
+            newAnswer.setView(layout);
+
+            newAnswer.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                    //---update answer to question ---
+                        int id2;
+                        // id_usera, id_pitanja, tekst odgovora
+                        id2 = db.updateAnswer(1, id_pitanja, input.getText().toString());
+                        if (id2 > 0) {
+                            Toast.makeText(getApplicationContext(), id2 + " redak je ažuriran!", Toast.LENGTH_SHORT).show();
+                           /* recreate();
+                            vpPager.setAdapter(adapterViewPager);
+                            vpPager.setCurrentItem(current_position-1); */
+                           osvjezi();
+
+                        }
+                        db.close();
                 }
-                //---update answer to question ---
-                else{
-                    int id2;
-                    id2 = db.updateAnswer(2, id_pitanja, input.getText().toString());
-                    if (id2 > 0) {
-                        Toast.makeText(getApplicationContext(), "Updejtano " + id2 + " redaka!", Toast.LENGTH_SHORT).show();
-                        //vpPager.setAdapter(adapterViewPager);
-                        vpPager.setCurrentItem(current_position);
-                    }
-                    db.close();
+            });
+            newAnswer.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                    //Toast.makeText(getApplicationContext(), "Odustali ste od odgovora.", Toast.LENGTH_LONG).show();
                 }
-            }
-        });
-        newAnswer.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-                //Toast.makeText(getApplicationContext(), "Odustali ste od odgovora.", Toast.LENGTH_LONG).show();
-            }
-        });
+            });
 
-        AlertDialog dialog = newAnswer.create();
-        dialog.show();
+            AlertDialog dialog = newAnswer.create();
+            dialog.show();
+        }
+
     }
 
     public void new_question()
     {
-        AlertDialog.Builder newAnswer = new AlertDialog.Builder(MainActivity.this);
-        newAnswer.setTitle("Novo pitanje");
-        newAnswer.setMessage("Unesi novo pitanje: ");
-
-        final EditText input = new EditText(MainActivity.this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-
-        input.setLayoutParams(lp);
-        newAnswer.setView(input);
-
-        newAnswer.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-               /* Globals g = Globals.getInstance();
-                g.logout();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish(); */
-                DBAdapter db = new DBAdapter(getApplicationContext());
+        //Globals g = Globals.getInstance();
+         final DBAdapter db = new DBAdapter(getApplicationContext());
                 db.open();
                 /*if ( !db.Admin(g.getId) )
                 {
                      Toast.makeText(getApplicationContext(), "Nemate ovlasti dodati pitanje!", Toast.LENGTH_SHORT).show();
                 }
 
-                else{*/
+         else*/
+        android.support.v7.app.AlertDialog.Builder newQuestion =
+                new android.support.v7.app.AlertDialog.Builder(MainActivity.this,  R.style.MyDialogStyle);
+                  /*  .setTitle("Novi odgovor")
+                    .setMessage("Odgovor na pitanje " + id_pitanja); */
+
+        final TextView naslov = new TextView(MainActivity.this);
+        naslov.setText("Unesite novo pitanje:");
+        naslov.setGravity(Gravity.CENTER);
+
+        final EditText input = new EditText(MainActivity.this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+
+        lp.setMargins(24, 24, 24, 24);  //TRBL
+
+        input.setLayoutParams(lp);
+        naslov.setLayoutParams(lp);
+        //layoutnaslov.addView(naslov);
+
+        LinearLayout layout = new LinearLayout(MainActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        layout.addView(naslov);
+        layout.addView(input);
+
+        newQuestion.setView(layout);
+
+
+        newQuestion.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
                 //---add a question---
 
                 long id3;
                 id3 = db.insertQuestion( input.getText().toString());
                 if ( id3 > 0 ) {
                     Toast.makeText(getApplicationContext(), "Novo pitanje je uspješno dodano!", Toast.LENGTH_SHORT).show();
+                    db.close();
                     osvjezi();
-
+                   // recreate();
+                    //vpPager.setAdapter(adapterViewPager);
+                    //vpPager.setCurrentItem(current_position);
                 }
                 db.close();
             }
+
         });
-        newAnswer.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+        newQuestion.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User cancelled the dialog
                // Toast.makeText(getApplicationContext(), "Odustali ste od novog pitanja.", Toast.LENGTH_LONG).show();
             }
         });
-        AlertDialog dialog = newAnswer.create();
+        AlertDialog dialog = newQuestion.create();
         dialog.show();
     }
     //------------------------------------------------------------------------------
@@ -546,9 +595,10 @@ public class MainActivity extends AppCompatActivity
     public void osvjezi()
     {
         dohvatiPitanja();
-        vpPager = (ViewPager) findViewById(R.id.viewpager);
+        //vpPager = (ViewPager) findViewById(R.id.viewpager);
         adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
         vpPager.setAdapter(adapterViewPager);
+        vpPager.setCurrentItem(position);
 
         vpPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -566,6 +616,15 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+    }
+
+     void setAdapter(int position) {
+
+        //adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
+        vpPager.setAdapter(adapterViewPager);
+        // when notify then set manually current position.
+        vpPager.setCurrentItem(position);
+        adapterViewPager.notifyDataSetChanged();
     }
 
 }

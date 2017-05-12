@@ -88,6 +88,7 @@ public class DBAdapter {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_QUEST, q);
         long insert =  db.insert(DATABASE_TABLE, null, initialValues); // ovo vraca last inserted id
+        TitleList.add(q);
         if (insert != -1)
         {
             Cursor c = getAllContacts();
@@ -145,8 +146,8 @@ public class DBAdapter {
     static final String DATABASE_TABLE2 = "odgovori";
 
     static final String DATABASE_CREATE2 =
-            "create table odgovori (id_user integer not null, " + "username text not null, " +
-                    "questionNmb integer not null, " + "answer text not null);";
+            "odgovori (id_user integer not null, " + "username text not null, " +
+                    "questionNmb integer create table not null, " + "answer text not null);";
 
     //---insert a answer into the database---
     public long insertAnswer(Integer id, String user, Integer nmb ,String ans)
@@ -170,16 +171,17 @@ public class DBAdapter {
         return db.query(DATABASE_TABLE2, new String[]{KEY_ID_USER, KEY_USER, KEY_NMB_QUEST, KEY_ANSW}, null, null, null, null, KEY_ID_USER+" ASC");
     }
 
-    public boolean isAnswered(int user_id, int quest_nmb )
+    public int notAnswered(int user_id, int quest_nmb )
     {
+        String neodgovoreno = "---";
+
         int i = db.query(DATABASE_TABLE2, new String[]{KEY_ID_USER, KEY_USER, KEY_NMB_QUEST, KEY_ANSW},
-                        KEY_ID_USER + " = " + user_id + " AND " +
-                        KEY_NMB_QUEST + " = " + quest_nmb + " AND " +
-                        KEY_ANSW + " = " + "---",
-                        null, null, null, null).getCount();
-        if( i > 0 )
-            return false;
-        return true;
+                KEY_ID_USER + "=? AND " +
+                        KEY_NMB_QUEST + "=? AND " +
+                        KEY_ANSW + "=?",
+                new String[]{String.valueOf(user_id), String.valueOf(quest_nmb),neodgovoreno},
+                null, null, null, null).getCount();
+        return i;
     }
 
     public void deleteAnswersTable(){ db.execSQL("delete from " + DATABASE_TABLE2); }
@@ -192,6 +194,7 @@ public class DBAdapter {
         //cv.put(KEY_NMB_QUEST, id_pitanja);
         cv.put(KEY_ANSW, odgovor);
 
+        //MainActivity.setAdapter(id_pitanja-1);
         return db.update(DATABASE_TABLE2, cv, KEY_ID_USER + "=" + id_usera +
                         " AND " + KEY_NMB_QUEST + "=" + id_pitanja, null);
         // vraca broj promjenjenih redaka
