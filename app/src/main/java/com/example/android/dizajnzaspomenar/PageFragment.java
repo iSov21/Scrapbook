@@ -50,6 +50,7 @@ public class PageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         page = getArguments().getInt("someInt", 0);
         title = getArguments().getString("someTitle");
     }
@@ -68,6 +69,8 @@ public class PageFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
 
         return recyclerView;
     }
