@@ -14,19 +14,17 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.v7.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background"
+    android:id="@+id/recycler_view_users"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="?android:attr/selectableItemBackground"
-    android:padding="8dp">
-
-    <TextView
-        android:id="@+id/list_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/article_subheading" />
-
-</RelativeLayout>
+    android:layout_below="@+id/toolbarQuestion"
+    android:clipToPadding="false"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp"
+    android:scrollbars="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior" />

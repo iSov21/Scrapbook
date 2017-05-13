@@ -106,6 +106,7 @@
         <item>@drawable/star</item>
     </array>
     <array name="slike">
+        <item>@drawable/ic_saturnplanetquestions</item>
         <item>@drawable/space</item>
     </array>
 </resources>

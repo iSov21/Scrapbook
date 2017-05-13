@@ -54,7 +54,7 @@ public class AllQuestions extends AppCompatActivity {
 
         placePictures.recycle();
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_details_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_users);
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager

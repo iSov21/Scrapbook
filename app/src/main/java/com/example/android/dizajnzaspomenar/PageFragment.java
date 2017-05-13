@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.android.dizajnzaspomenar.DetailActivity.EXTRA_POSITION;
+import static com.example.android.dizajnzaspomenar.R.drawable.a;
 
 /**
  * Created by Tena on 5/10/2017.
