@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Globals g = Globals.getInstance();
+
         FloatingActionButton fab_question = (FloatingActionButton) findViewById(R.id.fab_new_question);
         fab_question.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +79,14 @@ public class MainActivity extends AppCompatActivity
                 new_question();
             }
         });
+        if(!g.isLogged()){fab_question.setVisibility(View.GONE); }
+        else
+        {
+            DBAdapter db = new DBAdapter(this);
+            db.open();
+            if(db.isAdmin(g.getId())) {fab_question.setVisibility(View.VISIBLE);}
+            else{fab_question.setVisibility(View.GONE);}
+        }
 
         FloatingActionButton fab_answer = (FloatingActionButton) findViewById(R.id.fab_new_answer);
         fab_answer.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +95,8 @@ public class MainActivity extends AppCompatActivity
                 new_answer();
             }
         });
+        if(!g.isLogged()) {fab_answer.setVisibility(View.GONE); }
+        else{fab_answer.setVisibility(View.VISIBLE);}
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -163,7 +175,35 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_manage) {
             Intent intent = new Intent(this, com.example.android.dizajnzaspomenar.Settings.class);
             this.startActivity(intent);
+        }else if (id == R.id.nav_logout) {
+            Globals g = Globals.getInstance();
+            if(g.isLogged())
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.logout_message).setTitle(R.string.logout_title);
 
+                builder.setPositiveButton(R.string.logout_ok, new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id){
+                        Globals g = Globals.getInstance();
+                        g.logout();
+                        Intent intent = new Intent(getApplicationContext(), com.example.android.dizajnzaspomenar.MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                } );
+
+                builder.setNegativeButton(R.string.logout_cancel, new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id) {/*User cancelled the dialog*/}
+                } );
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+
+            else{
+                Intent intent = new Intent(this, com.example.android.dizajnzaspomenar.LoginActivity.class);
+                this.startActivity(intent);
+            }
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {

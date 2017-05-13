@@ -34,6 +34,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login">Prijava</string>
+    <string name="title_activity_signup">Napravi račun</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -48,4 +49,15 @@
         completions."
     </string>
     <string name="title_activity_settings">Settings</string>
+
+    <string name="nastaviGost">Nastavi kao gost</string>
+    <string name="createAccount">Napravi račun</string>
+    <string name="prijava">Prijava</string>
+    <string name="lozinka">Lozinka</string>
+    <string name="ime">Ime</string>
+    <string name="alreadyMember">Već imate račun? Prijavite se. :)</string>
+    <string name="logout_message">Želite li se odjaviti?</string>
+    <string name="logout_title">Odjava</string>
+    <string name="logout_ok">Da</string>
+    <string name="logout_cancel">Ne</string>
 </resources>
