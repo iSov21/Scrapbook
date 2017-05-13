@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity
     public int position;
     public static int current_position;
     public static int BROJ_PITANJA;
+    public static int  id_usera;
 
     private  ViewPager vpPager;
     private SmartFragmentStatePagerAdapter adapterViewPager;
@@ -120,6 +121,8 @@ public class MainActivity extends AppCompatActivity
     // Update the action bar title with the TypefaceSpan instance
         ActionBar actionBar = getActionBar();
         actionBar.setTitle(s);*/
+
+        id_usera = g.getId();
         dohvatiPitanja();
 
         vpPager = (ViewPager) findViewById(R.id.viewpager);
@@ -170,12 +173,10 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, com.example.android.dizajnzaspomenar.AllUsersActivity.class);
             this.startActivity(intent);
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        } /*else if (id == R.id.nav_manage) {
             Intent intent = new Intent(this, com.example.android.dizajnzaspomenar.Settings.class);
             this.startActivity(intent);
-        }else if (id == R.id.nav_logout) {
+        }*/ else if (id == R.id.nav_logout) {
             Globals g = Globals.getInstance();
             if(g.isLogged())
             {
@@ -204,10 +205,6 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(this, com.example.android.dizajnzaspomenar.LoginActivity.class);
                 this.startActivity(intent);
             }
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -350,7 +347,7 @@ public class MainActivity extends AppCompatActivity
 
         final DBAdapter db = new DBAdapter(getApplicationContext());
         db.open();
-        int nije_odgovoreno =db.notAnswered(2, id_pitanja);
+        int nije_odgovoreno =db.notAnswered(id_usera, id_pitanja);
 
         //Toast.makeText(getApplicationContext(), "notAnswered = " + nije_odgovoreno, Toast.LENGTH_SHORT).show();
         if ( nije_odgovoreno == 0) {//id_usera, id_pitanja
@@ -394,7 +391,7 @@ public class MainActivity extends AppCompatActivity
                     //---update answer to question ---
                         int id2;
                         // id_usera, id_pitanja, tekst odgovora
-                        id2 = db.updateAnswer(2, id_pitanja, input.getText().toString());
+                        id2 = db.updateAnswer(id_usera, id_pitanja, input.getText().toString());
                         if (id2 > 0) {
                             Toast.makeText(getApplicationContext(), id2 + " redak je ažuriran!", Toast.LENGTH_SHORT).show();
                            /* recreate();
@@ -421,15 +418,9 @@ public class MainActivity extends AppCompatActivity
 
     public void new_question()
     {
-        //Globals g = Globals.getInstance();
-         final DBAdapter db = new DBAdapter(getApplicationContext());
-                db.open();
-                /*if ( !db.Admin(g.getId) )
-                {
-                     Toast.makeText(getApplicationContext(), "Nemate ovlasti dodati pitanje!", Toast.LENGTH_SHORT).show();
-                }
+        final DBAdapter db = new DBAdapter(getApplicationContext());
+        db.open();
 
-         else*/
         android.support.v7.app.AlertDialog.Builder newQuestion =
                 new android.support.v7.app.AlertDialog.Builder(MainActivity.this,  R.style.MyDialogStyle);
 

@@ -61,6 +61,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+        //popuniPitanja();
+        //popuniKorisnike();
+        //popuniOdgovore();
+
         setContentView(R.layout.activity_login);
         ButterKnife.inject(this);
 
@@ -174,6 +178,48 @@ public class LoginActivity extends AppCompatActivity {
 
         return valid;
     }
+    public void popuniPitanja() //možda da bude bool da znamo jel uspjesno ili ne?
+    {
+        DBAdapter db = new DBAdapter(this);
+        //---add a question---
+        db.open();
+        long id;
+        id = db.insertQuestion("Kako se zoveš?");
+        id = db.insertQuestion("Gdje živiš?");
+        id = db.insertQuestion("Koliko imaš godina?");
+        id = db.insertQuestion("Boja očiju?");
+        id = db.insertQuestion("Najbolji prijatelj?");
+        id = db.insertQuestion("Imaš li simpatiju?");
+        id = db.insertQuestion("Najdraže jelo?");
+        db.close();
+    }
 
+    public void popuniKorisnike()
+    {
+        DBAdapter db = new DBAdapter(this);
+
+        db.open();
+        long id;
+        id = db.insertContact("Tena", "tena@spomenar.hr", "admin", 1);
+        id = db.insertContact("Martina", "martina@spomenar.hr", "pass", 0);
+        id = db.insertContact("Iva", "iva@spomenar.hr", "pass", 0);
+
+        db.close();
+    }
+
+    public void popuniOdgovore() //možda da bude bool da znamo jel uspjesno ili ne?
+    {
+        DBAdapter db = new DBAdapter(this);
+
+        //---add a question---
+        db.open();
+        long id;
+
+        for (int i = 1; i <= 7; i++) {
+            id = db.insertAnswer(1, "Tena", i, "---");
+            id = db.insertAnswer(2, "Martina", i, "---");
+            id = db.insertAnswer(3, "Iva", i, "---");
+        }
+    }
 }
 
