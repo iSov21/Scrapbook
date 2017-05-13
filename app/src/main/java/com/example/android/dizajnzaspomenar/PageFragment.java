@@ -166,6 +166,6 @@ public class PageFragment extends Fragment {
         public int getItemCount() {
             return LENGTH;
         }
-
     }
+
 }

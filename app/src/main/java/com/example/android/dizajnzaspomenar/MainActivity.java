@@ -37,6 +37,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -54,8 +55,6 @@ import static com.example.android.dizajnzaspomenar.R.id.pager_title_strip;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private float x1,x2;
-    static final int MIN_DISTANCE = 150;
     public int position;
     public static int current_position;
     public static int BROJ_PITANJA;
@@ -131,88 +130,9 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-    }
-
-
-
-    private void setupViewPager(ViewPager viewPager) {
-        Adapter adapter = new Adapter(getSupportFragmentManager());
-
-        DBAdapter db = new DBAdapter(this);
-
-        db.open();
-        Cursor c = db.getAllQuestions();
-        if (c.moveToFirst()) {
-            do {
-                adapter.addFragment(new ListContentFragment(), c.getString(1));
-            } while (c.moveToNext());
-        }
-        db.close();
-
-        viewPager.setAdapter(adapter);
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position_inner) {
-                Globals g = Globals.getInstance();
-                g.setQuestionId(position_inner);
-                position = position_inner;
-
-                //provjera(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
 
     }
 
-    static class Adapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public Adapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-    }
-
-
-    public class DetailOnPageListener extends ViewPager.SimpleOnPageChangeListener{
-
-        private int currentPage;
-
-        @Override
-        public void onPageSelected( int position ) { currentPage = position; }
-
-        public final int getCurrentPage() { return currentPage; };
-    }
 
     @Override
     public void onBackPressed() {
@@ -260,16 +180,16 @@ public class MainActivity extends AppCompatActivity
      *
      * @author Tristan Waddington
      */
-    public class TypefaceSpan extends MetricAffectingSpan {
-        /** An <code>LruCache</code> for previously loaded typefaces. */
+   /* public class TypefaceSpan extends MetricAffectingSpan {
+         An <code>LruCache</code> for previously loaded typefaces.
         private LruCache<String, Typeface> sTypefaceCache =
                 new LruCache<String, Typeface>(12);
 
         private Typeface mTypeface;
 
-        /**
-         * Load the {@link Typeface} and apply to a {@link Spannable}.
-         */
+
+       // Load the {@link Typeface} and apply to a {@link Spannable}.
+
         public TypefaceSpan(Context context, String typefaceName) {
             mTypeface = sTypefaceCache.get(typefaceName);
 
@@ -297,7 +217,7 @@ public class MainActivity extends AppCompatActivity
             // Note: This flag is required for proper typeface rendering
             tp.setFlags(tp.getFlags() | Paint.SUBPIXEL_TEXT_FLAG);
         }
-    }
+    } */
 
     public void popuniBazu()
     {
@@ -333,9 +253,10 @@ public class MainActivity extends AppCompatActivity
 
         db.open();
         long id;
+        id = db.insertContact("Tena", "admin@admin.hr", "admin", 1);
         id = db.insertContact("Ana", "ana@ana.hr", "pass", 0);
         id = db.insertContact("Pero", "pero@pero.hr", "pass", 0);
-        id = db.insertContact("admin", "admin@admin.hr", "admin", 1);
+
         db.close();
     }
 
@@ -346,23 +267,12 @@ public class MainActivity extends AppCompatActivity
         //---add a question---
         db.open();
         long id;
-        id = db.insertAnswer(1,"Ana", 1, "Ana");
-        id = db.insertAnswer(1, "Ana", 2, "Zagreb" );
-        id = db.insertAnswer(1, "Ana", 3, "15");
-        id = db.insertAnswer(1, "Ana", 4, "Plava");
-        id = db.insertAnswer(1, "Ana", 5, "Petar");
-        id = db.insertAnswer(1, "Ana", 6, "Da");
-        id = db.insertAnswer(1, "Ana", 7, "Pizza");
 
-        id = db.insertAnswer(2, "Pero", 1, "Petar");
-        id = db.insertAnswer(2, "Pero", 2, "Zadar");
-        id = db.insertAnswer(2, "Pero", 3, "10");
-
-        for (int i=4; i<=7; i++)
-            id = db.insertAnswer(2, "Pero", i, "---");
-
-        for (int i=1; i<=7; i++)
-            id = db.insertAnswer(3, "admin", i, "---");
+        for (int i=1; i<=7; i++) {
+            id = db.insertAnswer(1, "Tena", i, "---");
+            id = db.insertAnswer(2, "Ana", i, "---");
+            id = db.insertAnswer(3, "Pero", i, "---");
+        }
 
         db.close();
     }
@@ -396,10 +306,11 @@ public class MainActivity extends AppCompatActivity
     public void new_answer()
     {
         final int id_pitanja = current_position + 1;
+        String tekst_pitanja = TitleList.get(current_position);
 
         final DBAdapter db = new DBAdapter(getApplicationContext());
         db.open();
-        int nije_odgovoreno =db.notAnswered(1, id_pitanja);
+        int nije_odgovoreno =db.notAnswered(2, id_pitanja);
 
         //Toast.makeText(getApplicationContext(), "notAnswered = " + nije_odgovoreno, Toast.LENGTH_SHORT).show();
         if ( nije_odgovoreno == 0) {//id_usera, id_pitanja
@@ -412,11 +323,9 @@ public class MainActivity extends AppCompatActivity
         else {
             android.support.v7.app.AlertDialog.Builder newAnswer =
                     new android.support.v7.app.AlertDialog.Builder(MainActivity.this,  R.style.MyDialogStyle);
-                  /*  .setTitle("Novi odgovor")
-                    .setMessage("Odgovor na pitanje " + id_pitanja); */
 
             final TextView naslov = new TextView(MainActivity.this);
-            naslov.setText("Unesite odgovor:");
+            naslov.setText("Unesite odgovor na pitanje \"" + tekst_pitanja + "\" :");
             naslov.setGravity(Gravity.CENTER);
             //naslov.setHeight(12);
 
@@ -445,7 +354,7 @@ public class MainActivity extends AppCompatActivity
                     //---update answer to question ---
                         int id2;
                         // id_usera, id_pitanja, tekst odgovora
-                        id2 = db.updateAnswer(1, id_pitanja, input.getText().toString());
+                        id2 = db.updateAnswer(2, id_pitanja, input.getText().toString());
                         if (id2 > 0) {
                             Toast.makeText(getApplicationContext(), id2 + " redak je ažuriran!", Toast.LENGTH_SHORT).show();
                            /* recreate();
@@ -483,8 +392,6 @@ public class MainActivity extends AppCompatActivity
          else*/
         android.support.v7.app.AlertDialog.Builder newQuestion =
                 new android.support.v7.app.AlertDialog.Builder(MainActivity.this,  R.style.MyDialogStyle);
-                  /*  .setTitle("Novi odgovor")
-                    .setMessage("Odgovor na pitanje " + id_pitanja); */
 
         final TextView naslov = new TextView(MainActivity.this);
         naslov.setText("Unesite novo pitanje:");
@@ -516,14 +423,12 @@ public class MainActivity extends AppCompatActivity
                 //---add a question---
 
                 long id3;
-                id3 = db.insertQuestion( input.getText().toString());
+                id3 = db.insertNewQuestion( input.getText().toString());
                 if ( id3 > 0 ) {
                     Toast.makeText(getApplicationContext(), "Novo pitanje je uspješno dodano!", Toast.LENGTH_SHORT).show();
                     db.close();
                     osvjezi();
-                   // recreate();
-                    //vpPager.setAdapter(adapterViewPager);
-                    //vpPager.setCurrentItem(current_position);
+
                 }
                 db.close();
             }
@@ -569,10 +474,10 @@ public class MainActivity extends AppCompatActivity
             return TitleList.get(position);
         }
 
+        @Override
         public int getItemPosition(Object item) {
             return POSITION_NONE;
         }
-
     }
 
     public void dohvatiPitanja()
@@ -594,38 +499,12 @@ public class MainActivity extends AppCompatActivity
 
     public void osvjezi()
     {
-        dohvatiPitanja();
-        //vpPager = (ViewPager) findViewById(R.id.viewpager);
-        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
-        vpPager.setAdapter(adapterViewPager);
-        vpPager.setCurrentItem(position);
-
-        vpPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                current_position = position;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        MyPagerAdapter adapter = ((MyPagerAdapter)vpPager.getAdapter());
+        vpPager.setAdapter(adapter);
     }
 
-     void setAdapter(int position) {
 
-        //adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
-        vpPager.setAdapter(adapterViewPager);
-        // when notify then set manually current position.
-        vpPager.setCurrentItem(position);
-        adapterViewPager.notifyDataSetChanged();
-    }
+
 
 }
 

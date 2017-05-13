@@ -103,12 +103,12 @@ public class ListContentFragment extends Fragment {
             }
             LENGTH = usersList.size();
 
-            c = db.getAnswers(getQuestionId());
-            Log.e("QUESTIONID", String.valueOf(getQuestionId()));
+            //c = db.getAnswers(getQuestionId());
+            //Log.e("QUESTIONID", String.valueOf(getQuestionId()));
             if (c.moveToFirst()  )
             {
                 do {
-                    if( c.getInt(2) == getQuestionId() )
+                    if( c.getInt(2) == 1 ) //getQuestionId
                     {
                         answersList.add(c.getString(3));
                         Log.e("TEKST ODGOVORA", c.getString(3));
@@ -116,8 +116,8 @@ public class ListContentFragment extends Fragment {
                 } while (c.moveToNext());
             }
             db.close();
-            if ( getQuestionId() == 1 )
-                increase();
+           /* if ( getQuestionId() == 1 )
+                increase(); */
 
             mPlaces = usersList.toArray(new String[0]);
            // mPlaceDescription = resources.getStringArray(R.array.place_desc);
@@ -151,14 +151,14 @@ public class ListContentFragment extends Fragment {
         public void increase()
         {
             Globals g = Globals.getInstance();
-            g.setQuestionId();
+
         }
 
-        public int getQuestionId()
+       /* public int getQuestionId()
         {
             Globals g = Globals.getInstance();
             return g.getQuestionId();
-        }
+        } */
 
       /*  public int compare()
         {

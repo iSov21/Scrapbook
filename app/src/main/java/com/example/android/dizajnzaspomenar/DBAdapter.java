@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.util.Log;
 
 import static android.R.attr.id;
+import static com.example.android.dizajnzaspomenar.MainActivity.BROJ_PITANJA;
 import static com.example.android.dizajnzaspomenar.MainActivity.TitleList;
 
 /**
@@ -23,7 +24,7 @@ public class DBAdapter {
 
     static final String DATABASE_NAME = "DBSpomenar";
     static final String DATABASE_TABLE = "pitanja";
-    static final int DATABASE_VERSION = 2;
+    static final int DATABASE_VERSION = 3;
 
     static final String DATABASE_CREATE =
             "create table pitanja (_id integer primary key autoincrement, "
@@ -87,8 +88,17 @@ public class DBAdapter {
     {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_QUEST, q);
+        return db.insert(DATABASE_TABLE, null, initialValues);
+    }
+
+    //---insert a new (user defined) question into the database---
+    public long insertNewQuestion(String q)
+    {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(KEY_QUEST, q);
         long insert =  db.insert(DATABASE_TABLE, null, initialValues); // ovo vraca last inserted id
         TitleList.add(q);
+        ++BROJ_PITANJA;
         if (insert != -1)
         {
             Cursor c = getAllContacts();
@@ -146,8 +156,8 @@ public class DBAdapter {
     static final String DATABASE_TABLE2 = "odgovori";
 
     static final String DATABASE_CREATE2 =
-            "odgovori (id_user integer not null, " + "username text not null, " +
-                    "questionNmb integer create table not null, " + "answer text not null);";
+            "create table odgovori (id_user integer not null, " + "username text not null, " +
+                    "questionNmb integer not null, " + "answer text not null);";
 
     //---insert a answer into the database---
     public long insertAnswer(Integer id, String user, Integer nmb ,String ans)

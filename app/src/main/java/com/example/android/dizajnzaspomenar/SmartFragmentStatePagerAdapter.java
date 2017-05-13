@@ -19,10 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.data;
 import static com.example.android.dizajnzaspomenar.DetailActivity.EXTRA_POSITION;
 
 /**
@@ -52,9 +54,17 @@ public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerA
         super.destroyItem(container, position, object);
     }
 
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
+
     // Returns the fragment for the position (if instantiated)
     public Fragment getRegisteredFragment(int position) {
         return registeredFragments.get(position);
     }
+
+
 }
 
