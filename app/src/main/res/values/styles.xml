@@ -25,14 +25,14 @@
 
     </style> -->
 
-    <style name="AppThemePink.NoActionBar">
+   <!-- <style name="AppThemePink.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppThemePink.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppThemePink.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppThemePink.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" /> -->
 
     <style name="MyDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <!-- Customize your theme here. -->
