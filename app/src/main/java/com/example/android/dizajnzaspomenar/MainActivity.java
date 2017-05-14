@@ -85,12 +85,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        popuniBazu();
-
         //provjera();
-
-       /* ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager); */
 
        /* SpannableString s = new SpannableString("Spomenar");
         s.setSpan(new TypefaceSpan(this, "Sacramento-Regular.otf"), 0, s.length(),
@@ -237,63 +232,7 @@ public class MainActivity extends AppCompatActivity
         }
     } */
 
-    public void popuniBazu()
-    {
-        DBAdapter db = new DBAdapter(this);
-        db.open();
-        if( db.getAllContacts().getCount() == 0 ) {
-            popuniPitanja();
-            popuniKorisnike();
-            popuniOdgovore();
-        }
-        db.close();
-    }
 
-    public void popuniPitanja() //možda da bude bool da znamo jel uspjesno ili ne?
-    {
-        DBAdapter db = new DBAdapter(this);
-        //---add a question---
-        db.open();
-        long id;
-        id = db.insertQuestion("Kako se zoveš?");
-        id = db.insertQuestion("Gdje živiš?");
-        id = db.insertQuestion("Koliko imaš godina?");
-        id = db.insertQuestion("Boja očiju?");
-        id = db.insertQuestion("Najbolji prijatelj?");
-        id = db.insertQuestion("Imaš li simpatiju?");
-        id = db.insertQuestion("Najdraže jelo?");
-        db.close();
-    }
-
-    public void popuniKorisnike()
-    {
-        DBAdapter db = new DBAdapter(this);
-
-        db.open();
-        long id;
-        id = db.insertContact("Tena", "admin@admin.hr", "admin", 1);
-        id = db.insertContact("Ana", "ana@ana.hr", "pass", 0);
-        id = db.insertContact("Pero", "pero@pero.hr", "pass", 0);
-
-        db.close();
-    }
-
-    public void popuniOdgovore() //možda da bude bool da znamo jel uspjesno ili ne?
-    {
-        DBAdapter db = new DBAdapter(this);
-
-        //---add a question---
-        db.open();
-        long id;
-
-        for (int i=1; i<=7; i++) {
-            id = db.insertAnswer(1, "Tena", i, "---");
-            id = db.insertAnswer(2, "Ana", i, "---");
-            id = db.insertAnswer(3, "Pero", i, "---");
-        }
-
-        db.close();
-    }
 
     public void obrisiPitanja()
     {
@@ -318,7 +257,8 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, String.valueOf(position), Toast.LENGTH_LONG).show();
             } while (c.moveToNext());
         }
-        db.close();}
+        db.close();
+    }
 
 
     public void new_answer()
@@ -511,13 +451,10 @@ public class MainActivity extends AppCompatActivity
 
     public void osvjezi()
     {
-        MyPagerAdapter adapter = ((MyPagerAdapter)vpPager.getAdapter());
+        MyPagerAdapter adapter  = new MyPagerAdapter(getSupportFragmentManager());
+        //MyPagerAdapter adapter = ((MyPagerAdapter)vpPager.getAdapter());
         vpPager.setAdapter(adapter);
     }
-
-
-
-
 }
 
 

@@ -61,9 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-       // popuniPitanja();
-        //popuniKorisnike();
-        //popuniOdgovore();
+        popuniBazu();
 
         setContentView(R.layout.activity_login);
         ButterKnife.inject(this);
@@ -207,19 +205,17 @@ public class LoginActivity extends AppCompatActivity {
         db.close();
     }
 
-    public void popuniOdgovore() //možda da bude bool da znamo jel uspjesno ili ne?
+
+    public void popuniBazu()
     {
         DBAdapter db = new DBAdapter(this);
-
-        //---add a question---
         db.open();
-        long id;
-
-        for (int i = 1; i <= 7; i++) {
-            id = db.insertAnswer(1, "Tena", i, "---");
-            id = db.insertAnswer(2, "Martina", i, "---");
-            id = db.insertAnswer(3, "Iva", i, "---");
+        if( db.getAllContacts().getCount() == 0 ) {
+            popuniPitanja();
+            popuniKorisnike();
         }
+        db.close();
     }
+
 }
 
