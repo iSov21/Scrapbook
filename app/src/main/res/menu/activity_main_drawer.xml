@@ -10,10 +10,10 @@
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_question_mark"
             android:title="Sva pitanja" />
-      <!--  <item
+        <item
             android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Postavke" /> -->
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Promijeni temu" />
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_power"

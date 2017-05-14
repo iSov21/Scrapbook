@@ -143,7 +143,8 @@ public class PageFragment extends Fragment {
             mPlaces = usersList.toArray(new String[0]);
             // mPlaceDescription = resources.getStringArray(R.array.place_desc);
             mPlaceDescription = answersList.toArray(new String[0]);
-            TypedArray a = resources.obtainTypedArray(R.array.place_avator);
+            Globals g = Globals.getInstance();
+            TypedArray a = resources.obtainTypedArray( g.getCakes() ? R.array.cakes_pictures : R.array.place_avator);
             mPlaceAvators = new Drawable[a.length()];
 
             for (int i = 0; i < mPlaceAvators.length; i++) {

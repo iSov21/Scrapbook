@@ -15,6 +15,7 @@ public class Globals extends Application{
     private int username_id = -1;
     private String username;
     private int currentPage;
+    private boolean cakes = false;
 
     // Restrict the constructor from being instantiated
     private Globals(){}
@@ -61,7 +62,15 @@ public class Globals extends Application{
         this.currentPage = position + 1;
     }
 
-    public int getCurrentPage(){
-        return this.currentPage;
+    public boolean getCakes(){
+        return this.cakes;
+    }
+
+    public void setCakes()
+    {
+        if ( !this.cakes )
+            this.cakes = true;
+        else
+            this.cakes = false;
     }
 }

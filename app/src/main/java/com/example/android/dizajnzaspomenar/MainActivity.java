@@ -1,33 +1,18 @@
 package com.example.android.dizajnzaspomenar;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.util.LruCache;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.TextPaint;
-import android.text.style.MetricAffectingSpan;
-import android.text.style.TypefaceSpan;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -35,22 +20,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.app.AlertDialog.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.android.dizajnzaspomenar.R.drawable.c;
-import static com.example.android.dizajnzaspomenar.R.id.fab_new_answer;
-import static com.example.android.dizajnzaspomenar.R.id.fab_new_question;
-import static com.example.android.dizajnzaspomenar.R.id.pager_title_strip;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -168,15 +145,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-            Intent intent = new Intent(this, com.example.android.dizajnzaspomenar.AllUsersActivity.class);
+            Intent intent = new Intent(this, com.example.android.dizajnzaspomenar.AboutActivity.class);
             this.startActivity(intent);
 
-        } /*else if (id == R.id.nav_manage) {
-            Intent intent = new Intent(this, com.example.android.dizajnzaspomenar.Settings.class);
+        } else if (id == R.id.nav_gallery) {
+            Intent intent = new Intent(this, QuestionsList.class);
             this.startActivity(intent);
-        }*/ else if (id == R.id.nav_logout) {
+
+        }else if (id == R.id.nav_manage) {
+                Globals g = Globals.getInstance();
+                g.setCakes();
+                recreate();
+
+        } else if (id == R.id.nav_logout) {
             Globals g = Globals.getInstance();
             if(g.isLogged())
             {
@@ -187,7 +168,7 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(DialogInterface dialog, int id){
                         Globals g = Globals.getInstance();
                         g.logout();
-                        Intent intent = new Intent(getApplicationContext(), com.example.android.dizajnzaspomenar.MainActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), com.example.android.dizajnzaspomenar.LoginActivity.class);
                         startActivity(intent);
                         finish();
                     }

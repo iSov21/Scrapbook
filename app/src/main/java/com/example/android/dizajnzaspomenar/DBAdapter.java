@@ -11,6 +11,7 @@ import android.util.Log;
 import static android.R.attr.id;
 import static com.example.android.dizajnzaspomenar.MainActivity.BROJ_PITANJA;
 import static com.example.android.dizajnzaspomenar.MainActivity.TitleList;
+import static com.example.android.dizajnzaspomenar.R.drawable.c;
 
 /**
  * Created by Tena on 5/7/2017.
@@ -230,7 +231,17 @@ public class DBAdapter {
         initialValues.put(KEY_EMAIL, email);
         initialValues.put(KEY_PASS, password);
         initialValues.put(KEY_ADMIN, admin);
-        return db.insert(DATABASE_TABLE3, null, initialValues);
+
+        long user_id =  db.insert(DATABASE_TABLE3, null, initialValues);
+        long prazni_odgovori = 0;
+        Cursor c = getAllQuestions();
+        if (c.moveToFirst()) {
+            do {            //user_id, username, question_id, odgovor
+                prazni_odgovori =
+                        insertAnswer((int)user_id, name, Integer.parseInt(c.getString(0)), "---" );
+            } while (c.moveToNext());
+        }
+        return user_id * prazni_odgovori;
     }
 
     //---deletes a particular contact---

@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
-import static com.example.android.dizajnzaspomenar.R.array.places;
+
 
 /**
  * Provides UI for the Detail page with Collapsing Toolbar.
@@ -76,7 +76,9 @@ public class DetailActivity extends AppCompatActivity {
         // Set title of Detail page
         collapsingToolbar.setTitle(c.getString(1));
 
-        TypedArray placePictures = resources.obtainTypedArray(R.array.places_picture);
+        Globals g = Globals.getInstance();
+
+        TypedArray placePictures = resources.obtainTypedArray(g.getCakes() ? R.array.cakes_pictures : R.array.place_avator);
         ImageView placePicutre = (ImageView) findViewById(R.id.image);
         placePicutre.setImageDrawable(placePictures.getDrawable(position % placePictures.length()));
 

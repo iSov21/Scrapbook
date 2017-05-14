@@ -18,7 +18,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllUsersActivity extends AppCompatActivity {
+public class QuestionsList extends AppCompatActivity {
 
     public static final String EXTRA_POSITION = "position";
     private RecyclerView mRecyclerView;
@@ -44,7 +44,9 @@ public class AllUsersActivity extends AppCompatActivity {
         // Set title of Detail page
         collapsingToolbar.setTitle("Sva pitanja");
 
-        TypedArray placePictures = resources.obtainTypedArray(R.array.slike);
+        Globals g = Globals.getInstance();
+
+        TypedArray placePictures = resources.obtainTypedArray(g.getCakes() ? R.array.slike_cupcakes : R.array.slike);
         ImageView placePicutre = (ImageView) findViewById(R.id.image);
         placePicutre.setImageDrawable(placePictures.getDrawable(0 % placePictures.length()));
 

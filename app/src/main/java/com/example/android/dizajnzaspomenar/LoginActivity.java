@@ -61,16 +61,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        //popuniPitanja();
+       // popuniPitanja();
         //popuniKorisnike();
         //popuniOdgovore();
 
         setContentView(R.layout.activity_login);
         ButterKnife.inject(this);
 
-        getWindow().setSoftInputMode(
+       /* getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-        );
+        ); */
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
